@@ -26,8 +26,8 @@ mysql-connector-python 8.0.18
 - O bot armazena as informações dos usuários que interagem com o bot;
 - Assim como armazena também as mensagens trocadas com estes usuários.
 
-## Diferenciais que somam pontos extras ao projeto:
-- [ ] Desenvolver testes unitários;
+## Diferenciais:
+- [ ] Testes unitários;
 - [ ] Deploy da aplicação na AWS.
 
 
