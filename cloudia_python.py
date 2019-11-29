@@ -150,8 +150,8 @@ def db_update(table, suffix):
     db.commit()
 
 
-def db_update_user_by_id(id, newname):
-    db_update(db_users_table, "SET name='" + newname + "' WHERE id='" + str(id) + "'")
+def db_update_user_by_id(id, new_name):
+    db_update(db_users_table, "SET name='" + new_name + "' WHERE id='" + str(id) + "'")
     result = db_query_user_by_id(id)
     return result
 
@@ -163,7 +163,7 @@ def db_update_user_by_name(username, new_name):
 
 
 def db_update_msg_by_id(id, new_user_id, new_msg, new_date):
-    db_update(db_msgs_table, "SET user_id='" + str(new_user_id) + "', message='" + new_msg + "', date=" + new_date + " WHERE id='" + str(id) + "'")
+    db_update(db_msgs_table, "SET user_id='" + str(new_user_id) + "', message='" + new_msg + "', date='" + new_date + "' WHERE id='" + str(id) + "'")
     result = db_query_msg_by_id(id)
     return result
 
@@ -206,6 +206,21 @@ def db_delete_users():
 
 def db_delete_msgs():
     db_delete_table(db_msgs_table)
+
+
+def get_username_from_data(data):
+    if isempty(data):
+        raise InvalidUsage("The 'user' key must be non-empty", status_code=422)
+    if data.isdigit():
+        user_id = int(data)
+        result  = db_query_user_by_id(user_id)
+        if isempty(result):
+            raise InvalidUsage("User not found", status_code=422)
+        user     = result[0]
+        username = user[db_username_col]
+    else:
+        username = data
+    return username
 
 
 def users_dict(users_list):
@@ -297,10 +312,13 @@ def put_user_by_id(id):
             data = json_data
         else:
             raise InvalidUsage("An user 'name' key must be provided", status_code=422)
-    newname = data["name"]
-    if isempty(newname):
+    new_name = data["name"]
+    if isempty(new_name):
         raise InvalidUsage("The new user 'name' key must be non-empty", status_code=422)
-    result  = db_update_user_by_id(id, newname)
+    result = db_query_user_by_name(new_name)
+    if not isempty(result):
+        raise InvalidUsage("Theres is already an user with the provided 'name' key", status_code=422)
+    result  = db_update_user_by_id(id, new_name)
     return users_dict(result)
 
 
@@ -320,6 +338,9 @@ def put_user_by_name(username):
     new_name = data["name"]
     if isempty(new_name):
         raise InvalidUsage("The new user 'name' key must be non-empty", status_code=422)
+    result = db_query_user_by_name(new_name)
+    if not isempty(result):
+        raise InvalidUsage("Theres is already an user with the provided 'name' key", status_code=422)
     result = db_update_user_by_name(username, new_name)
     return users_dict(result)
 
@@ -346,20 +367,10 @@ def post_msgs():
             data = json_data
         else:
             raise InvalidUsage("The keys 'user' and 'msg' must be provided", status_code=422)
-    user = data["user"]
-    if isempty(user):
-        raise InvalidUsage("The 'user' key must be non-empty", status_code=422)
-    if user.isdigit():
-        user_id = int(user)
-        result  = db_query_user_by_id(user_id)
-        if isempty(result):
-            raise InvalidUsage("User not found", status_code=422)
-        user     = result[0]
-        username = user[db_username_col]
-    else:
-        username = user
-    msg = data["msg"]
-    result = db_insert_msg(username, msg)
+    userdata = data["user"]
+    username = get_username_from_data(userdata)
+    msg      = data["msg"]
+    result   = db_insert_msg(username, msg)
     return msgs_dict([result])
 
 
@@ -429,9 +440,10 @@ def post_index():
             data = json_data
         else:
             raise InvalidUsage("The keys 'user' and 'msg' must be provided", status_code=422)
-    username = data["user"]
+    userdata = data["user"]
+    username = get_username_from_data(userdata)
     msg      = data["msg"]
-    redirect(url_for('post_msgs', user=username, msg=msg), code=307)
+    db_insert_msg(username, msg)
 
     if msg is None or not msg.isdigit():
         return ""
