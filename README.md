@@ -15,8 +15,7 @@ mysql-connector-python 8.0.18
 ## Sobre as tecnologias usadas:
 - [X] Flask como framework web da aplicação;
 - [X] Requisições de API são tratadas utilizando arquitetura REST;
-- [X] Banco de dados relacional MySQL;
-- [ ] Pytest como framework de teste unitário.
+- [X] Banco de dados relacional MySQL.
 
 ## Funcionalidade:
 - O bot recebe como entrada qualquer texto com até 280 caracteres e responde caso seja um número inteiro.
@@ -26,8 +25,9 @@ mysql-connector-python 8.0.18
 - O bot armazena as informações dos usuários que interagem com o bot;
 - Assim como armazena também as mensagens trocadas com estes usuários.
 
-## Diferenciais:
+## A fazer:
 - [ ] Testes unitários;
+- [ ] Pytest como framework de teste unitário;
 - [ ] Deploy da aplicação na AWS.
 
 
