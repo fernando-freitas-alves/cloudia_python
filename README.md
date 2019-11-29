@@ -25,11 +25,6 @@ mysql-connector-python 8.0.18
 - O bot armazena as informações dos usuários que interagem com o bot;
 - Assim como armazena também as mensagens trocadas com estes usuários.
 
-## A fazer:
-- [ ] Testes unitários;
-- [ ] Pytest como framework de teste unitário;
-- [ ] Deploy da aplicação na AWS.
-
 
 ## Como rodar:
 ```
@@ -55,3 +50,8 @@ Acesse em um navegador:
 - http://localhost:5000/api/msgs/1, para verificar a primeira mensagem gravada
 - http://localhost:5000/api/users/2, para verificar o segundo usuário gravado
 ```
+
+## A fazer:
+- [ ] Testes unitários;
+- [ ] Pytest como framework de teste unitário;
+- [ ] Deploy da aplicação na AWS.
